@@ -22,7 +22,7 @@ class HeimdallApi {
   http.Client client = new http.Client();
 
   Future<List<Etudiant>> getStudentsInClass(int classId) async {
-    dynamic result = await get('promotions/etudiants/$classId');
+    dynamic result = await get('promotions/etudiants/$classId/students');
     return new List<Etudiant>.from(result.map((x) => Etudiant.fromJson(x)));
   }
 
@@ -32,19 +32,19 @@ class HeimdallApi {
   }
 
   Future<List<ClassGroup>> getClasses() async {
-    dynamic result = await get('absence/promotions');
+    dynamic result = await get('absence/promotions', authHeader);
     return new List<ClassGroup>.from(result.map((x) => ClassGroup.fromJson(x)));
   }
 
-  Future<List<RollCall>> getRollCalls([int limit]) async {
-    dynamic result = await get('absence/etudiant', limit == null ? null : {'limit': limit.toString()});
+  Future<List<RollCall>> getRollCalls() async {
+    dynamic result = await get('rollcall', authHeader);
     return new List<RollCall>.from(result.map((x) => RollCall.fromJson(x)));
   }
 
-  /*Future<List<RollCall>> getRollCallsLastWeek() async {
-    dynamic result = await get('rollcall/lastweek');
+  Future<List<RollCall>> getRollCallsLastWeek() async {
+    dynamic result = await get('rollcall/lastweek', authHeader);
     return new List<RollCall>.from(result.map((x) => RollCall.fromJson(x)));
-  }*/
+  }
 
   Future<RollCall> updateRollCall(RollCall rollCall) async {
     dynamic result = await put('rollcall/${rollCall.id}', rollCall.toJson());
@@ -57,17 +57,17 @@ class HeimdallApi {
   }
 
   Future<List<StudentPresence>> getStudentPresences() async {
-    dynamic result = await get('student/presence');
+    dynamic result = await get('student/presence', authHeader);
     return new List<StudentPresence>.from(result.map((x) => StudentPresence.fromJson(x)));
   }
 
   Future<List<StudentPresence>> getStudentRetards() async {
-    dynamic result = await get('student/Retards');
+    dynamic result = await get('student/Retards', authHeader);
     return new List<StudentPresence>.from(result.map((x) => StudentPresence.fromJson(x)));
   }
 
   Future<List<String>> getExcuses() async {
-    dynamic result = await get('student/presence/excuses');
+    dynamic result = await get('student/presence/excuses', authHeader);
     return new List<String>.from(result);
   }
 
@@ -133,14 +133,15 @@ class HeimdallApi {
     }*/
     
     request.headers[HttpHeaders.authorizationHeader] = 'token $userToken';
-    /*request.headers[HttpHeaders.acceptHeader] = ContentType.json.mimeType;
-    request.headers[HttpHeaders.contentTypeHeader] = ContentType.json.mimeType;*/
+    request.headers[HttpHeaders.acceptHeader] = ContentType.json.mimeType;
+    request.headers[HttpHeaders.contentTypeHeader] = ContentType.json.mimeType;
     print(request.headers);
     http.StreamedResponse response = await client.send(request)
         .timeout(Duration(seconds: 30), onTimeout: () {
       throw new ApiConnectException(type: ApiConnectExceptionType.timeout);
     });
-
+    print(response);
+    //print((await http.Response.fromStream(response)).body);
     final responseBody = json.decode((await http.Response.fromStream(response)).body);
     print(responseBody);
     switch (response.statusCode) {

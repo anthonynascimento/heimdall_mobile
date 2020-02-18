@@ -26,7 +26,7 @@ class _HomeState extends Logged<Home> {
 
   void _getRollCalls() async {
     await initializeDateFormatting('fr_FR', null);
-    List<RollCall> rollCalls = await api.getRollCalls(20);
+    List<RollCall> rollCalls = await api.getRollCalls();
       setState(() {
         _rollCalls = rollCalls;
         loading = false;
