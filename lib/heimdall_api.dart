@@ -5,8 +5,9 @@ import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:heimdall/exceptions/api_connect.dart';
 import 'package:heimdall/exceptions/auth.dart';
-import 'package:heimdall/model/rollcall.dart';
+import 'package:heimdall/model/_absencetudiant.dart';
 import 'package:heimdall/model/etudiant.dart';
+import 'package:heimdall/model/rollcall.dart';
 import 'package:heimdall/model/student_presence.dart';
 import 'package:heimdall/model/user.dart';
 import "package:http/http.dart" as http;
@@ -19,6 +20,7 @@ class HeimdallApi {
   String apiUrlHostname;
   String apiUrlBaseEndpoint;
   String userToken;
+  String userType;
   http.Client client = new http.Client();
 
   Future<List<Etudiant>> getStudentsInClass(int classId) async {
@@ -56,9 +58,10 @@ class HeimdallApi {
     return RollCall.fromJson(result);
   }
 
-  Future<List<StudentPresence>> getStudentPresences() async {
-    dynamic result = await get('student/presence', authHeader);
-    return new List<StudentPresence>.from(result.map((x) => StudentPresence.fromJson(x)));
+  Future<List<AbsenceEtudiant>> getStudentPresences() async {
+    dynamic result = await get('absence/etudiant', authHeader);
+    print(result);
+    return new List<AbsenceEtudiant>.from(result.map((x) => AbsenceEtudiant.fromJson(x)));
   }
 
   Future<List<StudentPresence>> getStudentRetards() async {
@@ -131,10 +134,9 @@ class HeimdallApi {
     /*if (userToken.isTokenExpired) {
       refreshUserToken();
     }*/
-    
-    request.headers[HttpHeaders.authorizationHeader] = 'token $userToken';
-    request.headers[HttpHeaders.acceptHeader] = ContentType.json.mimeType;
-    request.headers[HttpHeaders.contentTypeHeader] = ContentType.json.mimeType;
+    request.headers['Authorization'] = 'token $userToken';
+    /*request.headers[HttpHeaders.acceptHeader] = ContentType.json.mimeType;
+    request.headers[HttpHeaders.contentTypeHeader] = ContentType.json.mimeType;*/
     print(request.headers);
     http.StreamedResponse response = await client.send(request)
         .timeout(Duration(seconds: 30), onTimeout: () {
@@ -237,6 +239,7 @@ class HeimdallApi {
       final storage = new FlutterSecureStorage();
       storage.write(key: 'apiUrl', value: apiUrl);
       storage.write(key: 'userToken', value: json.encode(userToken));
+      userType = user.type.toString().toLowerCase();
 
       return user;
     }

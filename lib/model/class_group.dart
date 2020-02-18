@@ -1,4 +1,4 @@
-import 'package:heimdall/model/rollcall.dart';
+import 'package:heimdall/model/RollCall.dart';
 import 'package:heimdall/model/etudiant.dart';
 import 'package:heimdall/model/professeur.dart';
 

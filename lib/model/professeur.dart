@@ -1,5 +1,5 @@
 import 'package:heimdall/model/class_group.dart';
-import 'package:heimdall/model/rollcall.dart';
+import 'package:heimdall/model/RollCall.dart';
 import 'package:heimdall/model/user.dart';
 
 class Professeur extends User {

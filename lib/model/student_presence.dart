@@ -3,6 +3,7 @@ import 'dart:core';
 import 'package:heimdall/model/rollcall.dart';
 import 'package:heimdall/model/etudiant.dart';
 
+
 class StudentPresence {
   Etudiant student;
   RollCall rollCall;
@@ -35,9 +36,10 @@ class StudentPresence {
   }
 
   factory StudentPresence.fromJson(Map<String, dynamic> json) => new StudentPresence(
+    id: json["id"],
     student: json["student"] == null ? null : Etudiant.fromApi(json["student"]),
     rollCall: json["roll_call"] == null ? null : RollCall.fromApi(json["roll_call"]),
-    id: json["id"],
+    
     present: json["present"],
     lateDuration: Duration(minutes: json["late"] != null ? json["late"] : 0),
     excuse: json["excuse"],

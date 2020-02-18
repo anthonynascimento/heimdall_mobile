@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:heimdall/heimdall_api.dart';
 import 'package:heimdall/model.dart';
 import 'package:heimdall/model/user.dart';
@@ -10,6 +11,7 @@ abstract class Logged<T extends StatefulWidget> extends State<T> {
   bool includeBaseContainer = true;
   User user;
   HeimdallApi get api => AppModel.of(context).api;
+  final storage = new FlutterSecureStorage();
 
   @override
   @mustCallSuper
@@ -80,6 +82,8 @@ abstract class Logged<T extends StatefulWidget> extends State<T> {
           IconButton(
             icon: Icon(FontAwesomeIcons.solidUserCircle),
             onPressed: () {
+              String typeUs = api.userType;
+              print(context);
               changeRoute(context, '/account', roleSpecific: true);
             },
           ),

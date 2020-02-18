@@ -5,6 +5,8 @@ import 'package:heimdall/ui/pages/logged.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
+import '../../../model/rollcall.dart';
+
 class Home extends StatefulWidget {
   @override
   State createState() => _HomeState();
