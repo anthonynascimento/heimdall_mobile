@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:heimdall/exceptions/api_connect.dart';
 import 'package:heimdall/exceptions/auth.dart';
 import 'package:heimdall/model.dart';
-import 'package:heimdall/model/student.dart';
-import 'package:heimdall/model/teacher.dart';
+import 'package:heimdall/model/etudiant.dart';
+import 'package:heimdall/model/professeur.dart';
 import 'package:heimdall/model/user.dart';
 import 'package:heimdall/reset_password.dart';
 import 'package:heimdall/ui/pages/login.dart';
@@ -61,10 +61,10 @@ class App extends StatelessWidget {
                         return Text('Error: ${snapshot.error}'); // TODO : Gestion erreur
                       } else {
                         if (snapshot.data != null) {
-                          if (model.user is Student) {
+                          if (model.user is Etudiant) {
                             return student_home.Home();
                           }
-                          if (model.user is Teacher) {
+                          if (model.user is Professeur) {
                             return teacher_home.Home();
                           }
                         }

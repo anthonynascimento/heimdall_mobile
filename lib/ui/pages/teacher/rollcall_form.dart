@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_duration_picker/flutter_duration_picker.dart';
 import 'package:heimdall/model/class_group.dart';
 import 'package:heimdall/model/rollcall.dart';
-import 'package:heimdall/model/student.dart';
+import 'package:heimdall/model/etudiant.dart';
 import 'package:heimdall/model/student_presence.dart';
 import 'package:heimdall/ui/pages/logged.dart';
 import 'package:intl/intl.dart';
@@ -154,9 +154,9 @@ class _RollCallFormState extends Logged<RollCallForm> {
       _rollCall.classGroup = classGroup;
       _loadingStudents = true;
     });
-    List<Student> students = await api.getStudentsInClass(classGroup.id);
+    List<Etudiant> students = await api.getStudentsInClass(classGroup.id);
     List<StudentPresence> presences = new List<StudentPresence>();
-    for (Student student in students) {
+    for (Etudiant student in students) {
       presences.add(new StudentPresence(student: student, present: true));
     }
     setState(() {

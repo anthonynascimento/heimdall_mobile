@@ -58,36 +58,13 @@ class _LoginState extends State<Login> {
   }
 
   Future<String> _verifyServerUrl(String url) async {
-    final validateResult = Validator.validateUrl(url);
-    // Url format is not valid and does not contains http, try with https
-    if (validateResult != null && !url.contains('http')) {
-      return await _verifyServerUrl('https://' + url);
-    } else if (validateResult == null) {
-      if (url.endsWith('/')) url = url.substring(0, url.length - 1);
-      if (!url.contains('api')) url += '/api';
-      print('Verify : $url');
-      try {
-        final response = await http.get(url + "/");
-        if (response.statusCode == 200) {
-          Map<String, dynamic> data = json.decode(response.body);
-          if (data.containsKey('result') && data['result'] == 'heimdall') {
-            setState(() {
-              this._urlIsValid = true;
-              _urlController.text = url;
-            });
-            return url;
-          }
-        }
-      } catch (e) {
-        // If https don't work, try with http protocol
-        if (url.contains('https://')) {
-          return await _verifyServerUrl(url.replaceFirst('https', 'http'));
-        }
-      }
-    }
+    url = 'http://' + url;
+    url = url + ':8000/api';
+    print('Verify : $url');   
 
     setState(() {
-      this._urlIsValid = false;
+      _urlController.text = url;
+      this._urlIsValid = true;
     });
 
     return url;
@@ -150,9 +127,9 @@ class _LoginState extends State<Login> {
                               decoration: InputDecoration(
                                 labelText: "Adresse du serveur",
                                 icon: const Icon(Icons.computer),
-                                errorText: _urlIsValid == false ? "Ce serveur Heimdall n'existe pas" : null,
+                                //errorText: _urlIsValid == false ? "Ce serveur Heimdall n'existe pas" : null,
                               ),
-                              validator: Validator.validateUrl,
+                              //validator: Validator.validateUrl,
                               textInputAction: TextInputAction.next,
                               focusNode: _urlFocus,
                               controller: _urlController,

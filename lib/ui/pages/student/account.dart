@@ -4,7 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:heimdall/model.dart';
-import 'package:heimdall/model/student.dart';
+import 'package:heimdall/model/etudiant.dart';
 import 'package:heimdall/ui/components/loading_button.dart';
 import 'package:heimdall/ui/components/named_card.dart';
 import 'package:heimdall/ui/components/password_field.dart';
@@ -26,7 +26,7 @@ class _AccountState extends Logged<Account> with WidgetsBindingObserver {
     'newPassword': FocusNode(),
     'oldPassword': FocusNode(),
   };
-  Student student;
+  Etudiant student;
 
   @override
   initState() {

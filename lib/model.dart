@@ -54,10 +54,10 @@ class AppModel extends Model {
       if (userToken == null) {
         return null;
       }
-      this.api.userToken = UserToken.fromJson(json.decode(userToken));
+      this.api.userToken = userToken;
     }
 
-    this.user = User.fromJson(await api.refreshUserToken());
+    //this.user = User.fromJson(await api.refreshUserToken());
 
     return this.user;
   }

@@ -6,7 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:heimdall/exceptions/api_connect.dart';
 import 'package:heimdall/exceptions/auth.dart';
 import 'package:heimdall/model/rollcall.dart';
-import 'package:heimdall/model/student.dart';
+import 'package:heimdall/model/etudiant.dart';
 import 'package:heimdall/model/student_presence.dart';
 import 'package:heimdall/model/user.dart';
 import "package:http/http.dart" as http;
@@ -18,12 +18,17 @@ class HeimdallApi {
   String apiUrlProtocol;
   String apiUrlHostname;
   String apiUrlBaseEndpoint;
-  UserToken userToken;
+  String userToken;
   http.Client client = new http.Client();
 
-  Future<List<Student>> getStudentsInClass(int classId) async {
+  Future<List<Etudiant>> getStudentsInClass(int classId) async {
     dynamic result = await get('class/$classId/students');
-    return new List<Student>.from(result.map((x) => Student.fromJson(x)));
+    return new List<Etudiant>.from(result.map((x) => Etudiant.fromJson(x)));
+  }
+
+  Future<User> getUserFromToken(String token) async {
+    dynamic result = await get('utilisateur/user_connecte', authHeader);
+    return User.fromJson(result);
   }
 
   Future<List<ClassGroup>> getClasses() async {
@@ -68,13 +73,11 @@ class HeimdallApi {
 
   void ResetPassword() async {
     dynamic result = await get('student/reset_password');
-    
-
   }
 
   Map<String, String> get authHeader {
     return {
-      HttpHeaders.authorizationHeader: 'Bearer ${userToken.token}',
+      HttpHeaders.authorizationHeader: 'token $userToken',
     };
   }
 
@@ -94,6 +97,9 @@ class HeimdallApi {
     Uri uri = Uri.parse(url);
     apiUrlProtocol = uri.scheme;
     apiUrlHostname = uri.host;
+    if(!apiUrlHostname.endsWith(':8000')) {
+      apiUrlHostname = apiUrlHostname + ':8000';
+    }
     apiUrlBaseEndpoint = uri.path;
     if (apiUrlBaseEndpoint.endsWith('/')) {
       apiUrlBaseEndpoint = apiUrlBaseEndpoint.substring(0, apiUrlBaseEndpoint.length - 1);
@@ -110,23 +116,23 @@ class HeimdallApi {
     return uri;
   }
 
-  Future<Map<String, dynamic>> refreshUserToken() async {
+  /*Future<Map<String, dynamic>> refreshUserToken() async {
     if (userToken == null && apiUrlHostname == null) {
       throw new AuthException(AuthExceptionType.not_authenticated);
     }
     return userToken.refresh(apiUrl);
-  }
+  }*/
 
   Future<dynamic> _sendRequest(http.BaseRequest request, { bool refreshed = false }) async {
     if (userToken == null && apiUrl == null) {
       throw new AuthException(AuthExceptionType.not_authenticated);
     }
 
-    if (userToken.isTokenExpired) {
+    /*if (userToken.isTokenExpired) {
       refreshUserToken();
-    }
+    }*/
     
-    request.headers[HttpHeaders.authorizationHeader] = 'Bearer ${userToken.token}';
+    request.headers[HttpHeaders.authorizationHeader] = 'token $userToken';
     request.headers[HttpHeaders.acceptHeader] = ContentType.json.mimeType;
     request.headers[HttpHeaders.contentTypeHeader] = ContentType.json.mimeType;
     http.StreamedResponse response = await client.send(request)
@@ -146,7 +152,7 @@ class HeimdallApi {
           throw new AuthException(AuthExceptionType.invalid_token);
           // TODO : Redirection login screen, connection refused
         }
-        refreshUserToken();
+        //refreshUserToken();
         return _sendRequest(request, refreshed: true);
       default:
         String message = response.reasonPhrase;
@@ -205,7 +211,7 @@ class HeimdallApi {
     this.apiUrl = apiUrl;
     http.Response response;
     try {
-      response = await http.post('$apiUrl/login_check',
+      response = await http.post('$apiUrl/utilisateur/connexion',
           headers: {HttpHeaders.contentTypeHeader: ContentType.json.mimeType},
           body: '{"username":"$username","password":"$password"}')
           .timeout(Duration(seconds: 10), onTimeout: () {
@@ -218,15 +224,17 @@ class HeimdallApi {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> data = json.decode(response.body);
+      this.userToken = data['token'];
+      print(this.getUserFromToken(data['token']));
       final User user = User.fromJson(data['user']);
-      this.userToken = UserToken.fromJson(data);
+      
 
       _registerOneSignal(data['onesignal_app_id'], user);
 
       // Save the url & token on the phone to be able to reconnect the user later
       final storage = new FlutterSecureStorage();
       storage.write(key: 'apiUrl', value: apiUrl);
-      storage.write(key: 'userToken', value: json.encode(userToken.toJson()));
+      storage.write(key: 'userToken', value: json.encode(userToken));
 
       return user;
     }
@@ -236,62 +244,5 @@ class HeimdallApi {
     }
 
     throw new AuthException(AuthExceptionType.unknown);
-  }
-}
-
-class UserToken {
-  String refreshToken;
-  int refreshTokenExpires;
-  String token;
-  int tokenExpires;
-
-  UserToken({this.token, this.refreshToken, this.tokenExpires, this.refreshTokenExpires});
-
-  factory UserToken.fromJson(Map<String, dynamic> json) {
-    return UserToken(
-      refreshToken: json['refresh_token'],
-      refreshTokenExpires: json['refresh_token_expires'],
-      token: json.containsKey('token') ? json['token'] : null,
-      tokenExpires: json.containsKey('token_expires') ? json['token_expires'] : null,
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-    'refresh_token': refreshToken,
-    'refresh_token_expires': refreshTokenExpires,
-  };
-
-  bool get isTokenExpired => tokenExpires == null ? false : DateTime.now().millisecondsSinceEpoch >= tokenExpires;
-  bool get isRefreshTokenExpired => refreshTokenExpires == null ? false : DateTime.now().millisecondsSinceEpoch >= refreshTokenExpires;
-
-  // Returns the actualized user infos if successfull
-  Future<Map<String, dynamic>> refresh(String apiUrl) async {
-    if (!isRefreshTokenExpired) {
-      http.Response response;
-      try {
-        response = await http.post(
-            '$apiUrl/token/refresh', body: {'refresh_token': refreshToken})
-            .timeout(Duration(seconds: 10), onTimeout: () {
-              throw new ApiConnectException(type: ApiConnectExceptionType.timeout);
-            });
-      } on SocketException catch (e) {
-        throw new ApiConnectException(type: ApiConnectExceptionType.unknown, errorMessage: e.toString());
-      }
-      if (response.statusCode == 200) {
-        Map<String, dynamic> newTokenData = json.decode(response.body);
-        this.refreshToken = newTokenData['refresh_token'];
-        this.refreshTokenExpires = newTokenData['refresh_token_expires'];
-        this.token = newTokenData['token'];
-        this.tokenExpires = newTokenData['token_expires'];
-
-        // Update the stored token
-        final storage = new FlutterSecureStorage();
-        storage.write(key: 'userToken', value: json.encode(this.toJson()));
-
-        return newTokenData['user'];
-      }
-    }
-
-    throw new AuthException(AuthExceptionType.invalid_refresh_token);
   }
 }

@@ -1,9 +1,9 @@
-import 'package:heimdall/model/student.dart';
-import 'package:heimdall/model/teacher.dart';
+import 'package:heimdall/model/etudiant.dart';
+import 'package:heimdall/model/professeur.dart';
 
 abstract class User {
-  static final String STUDENT = 'Student';
-  static final String TEACHER = 'Teacher';
+  static final String ETUDIANT = 'Etudiant';
+  static final String PROFESSEUR = 'Professeur';
   final int id;
   final String username;
   String firstname;
@@ -16,10 +16,10 @@ abstract class User {
   User({this.id, this.username, this.firstname, this.lastname, this.lastLogin});
 
   factory User.fromJson(Map<String, dynamic> json) {
-    if (json['type'] == STUDENT) {
-      return Student.fromJson(json);
-    } else if (json['type'] == TEACHER) {
-      return Teacher.fromJson(json);
+    if (json['role'] == ETUDIANT) {
+      return Etudiant.fromJson(json);
+    } else if (json['role'] == PROFESSEUR) {
+      return Professeur.fromJson(json);
     }
     throw new Exception('User type not supported.');
   }

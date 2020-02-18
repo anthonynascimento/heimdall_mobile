@@ -2,13 +2,13 @@ import 'package:heimdall/model/class_group.dart';
 import 'package:heimdall/model/student_presence.dart';
 import 'package:heimdall/model/user.dart';
 
-class Student extends User {
+class Etudiant extends User {
   String photo;
   ClassGroup classGroup;
   List<StudentPresence> presences;
   String get type => 'student';
 
-  Student(
+  Etudiant(
       {int id, String username, String firstname, String lastname, DateTime lastLogin, this.photo, this.classGroup, this.presences})
       : super(id: id,
                   username: username,
@@ -16,17 +16,17 @@ class Student extends User {
                   lastname: lastname,
                   lastLogin: lastLogin);
 
-  factory Student.fromApi(dynamic data) {
+  factory Etudiant.fromApi(dynamic data) {
     if (data is int) {
-      return new Student(id: data);
+      return new Etudiant(id: data);
     }
     if (data is Map<String, dynamic>) {
-      return Student.fromJson(data);
+      return Etudiant.fromJson(data);
     }
     throw new Exception('Invalid format');
   }
 
-  factory Student.fromJson(Map<String, dynamic> json) => new Student(
+  factory Etudiant.fromJson(Map<String, dynamic> json) => new Etudiant(
     id: json["id"],
     username: json["username"],
     firstname: json["firstname"],
@@ -39,7 +39,7 @@ class Student extends User {
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "type": User.STUDENT,
+    "type": User.ETUDIANT,
     "username": username,
     "firstname": firstname,
     "lastname": lastname,
