@@ -61,7 +61,7 @@ class _HomeState extends Logged<Home> {
   }
 
   _showPresence(int index) async {
-    dynamic returnedPresence = await Navigator.pushNamed(context, '/student/justify', arguments: _studentPresences[index]);
+    dynamic returnedPresence = await Navigator.pushNamed(context, '/etudiant/justify', arguments: _studentPresences[index]);
     if (returnedPresence != null) {
       showSnackBar(SnackBar(
         content: Text("La justification a été envoyée."),

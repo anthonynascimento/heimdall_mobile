@@ -34,7 +34,7 @@ class _HomeState extends Logged<Home> {
   }
 
   void _showRollcallForm([RollCall rollcall]) async {
-    dynamic returnedRollcall = await Navigator.of(context).pushNamed('/teacher/rollcall', arguments: rollcall);
+    dynamic returnedRollcall = await Navigator.of(context).pushNamed('/professeur/rollcall', arguments: rollcall);
     if (returnedRollcall != null) {
       showSnackBar(SnackBar(
         content: Text("L'appel a bien été enregistré."),
