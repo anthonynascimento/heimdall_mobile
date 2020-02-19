@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:heimdall/helper/validation.dart';
 import 'package:heimdall/model.dart';
+import 'package:http/http.dart' as http;
 
 class ResetPassword extends StatefulWidget {
   @override
@@ -27,8 +28,31 @@ class _ResetPasswordState extends State<ResetPassword> {
     });
   }
 
-  void resetPassword() {
-
+  void resetPassword() async {
+    String url = 'http://192.168.1.44:8000/api/utilisateur/reset_mdp';
+    Map<String,String> body = {"email": _data.username};
+    http.put(Uri.encodeFull(url), body: body , headers: { "Accept" : "application/json"}).then((result) {
+  print(result.statusCode);
+  print(result.body);
+  showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: new Text("Mail envoyé"),
+              content: new Text('Vérifiez vos mails'),
+              actions: <Widget>[
+                new FlatButton(
+                  child: new Text("OK"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  ),
+              ],
+              );
+        });
+      
+});
+ 
   }
 
   @override
@@ -51,9 +75,9 @@ class _ResetPasswordState extends State<ResetPassword> {
                             TextFormField(
                               keyboardType: TextInputType.text,
                               decoration: InputDecoration(
-                                  labelText: "Numéro étudiant / Nom d'utilisateur",
+                                  labelText: "Mail",
                                   icon: const Icon(Icons.person)),
-                              validator: Validator.validateUsername,
+                              validator: Validator.validateEmail,
                               textInputAction: TextInputAction.next,
                               initialValue: AppModel.of(context).user?.username,
                               focusNode: _usernameFocus,
