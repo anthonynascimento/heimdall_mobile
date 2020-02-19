@@ -17,8 +17,8 @@ class Justify extends StatefulWidget {
 class _JustifyState extends Logged<Justify> {
   AbsenceEtudiant absence;
   bool includeBaseContainer = false;
-  File justificativeFile;
-  Image temp;
+  String justification;
+  final motifController = TextEditingController();
 
   @override
   void didChangeDependencies() {
@@ -31,20 +31,26 @@ class _JustifyState extends Logged<Justify> {
   }
 
   Future<void> _saveJustification() async {
-    if (absence.absence.justification != null) {
+    print(motifController.text);
+    if (motifController.text != "") {
       setState(() {
         loading = true;
       });
       try {
-        print('${api.apiUrl}/etudiant/justification/${absence.id}');
-        dynamic result = api.put('etudiant/justification/${absence.id}',
-          {
-            'justification' : absence.absence.justification
-          }, api.authHeader
-        );
+        String url = '${api.apiUrl}/etudiant/justification/${absence.id}';
+        print(url);
+    Map<String,String> body = {"justification": motifController.text};
+    Map<String,String> headers = { "Accept" : "application/json", "Authorization": "token ${api.userToken}"};
+    print(body);
+    print(headers);
+      http.put(Uri.encodeFull(url), body: body , headers: headers).then((result) {
+        print(result.statusCode);
+        print(result.body);
+        });
       } catch (e) {
         print(e);
       }
+      showSnackBar(SnackBar(content: Text('Insertion faite'), backgroundColor: Colors.green));
 
       /*if (returnedPresence != null) {
         Navigator.pop(context, returnedPresence);
@@ -73,8 +79,7 @@ class _JustifyState extends Logged<Justify> {
                               decoration: InputDecoration(
                                   labelText: "Raison",
                                   icon: const Icon(Icons.keyboard_arrow_right)),
-                              textInputAction: TextInputAction.next,
-                              onSaved: (String value) => absence.absence.justification = value,
+                              controller: motifController,
                             ),
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               )

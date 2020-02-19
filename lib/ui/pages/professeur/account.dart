@@ -33,7 +33,7 @@ class _AccountState extends Logged<Account> with WidgetsBindingObserver {
     FocusScope.of(context).requestFocus(new FocusNode()); // reset focus
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      String url = 'http://192.168.1.44:8000/api/utilisateur/modifier_mdp';
+      String url = '${api.apiUrl}/utilisateur/modifier_mdp';
     Map<String,String> body = {"password": _data["newPassword"]};
       http.put(Uri.encodeFull(url), body: body , headers: { "Accept" : "application/json", "Authorization": "token ${api.userToken}"}).then((result) {
         print(result.statusCode);

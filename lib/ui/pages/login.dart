@@ -52,16 +52,17 @@ class _LoginState extends State<Login> {
         });
   }
 
-  Future<String> _verifyServerUrl(String url) async {
-    url = 'http://' + url;
-    url = url + ':8000/api';
-    print('Verify : $url');   
+  String _verifyServerUrl(String url)  {
+    String newUrl = 'http://';
+    newUrl = newUrl + url;
+    newUrl = newUrl + ':8000/api';
+    print('Verify : $newUrl');   
 
     setState(() {
-      _urlController.text = url;
+      _urlController.text = newUrl;
     });
 
-    return url;
+    return newUrl;
   }
 
   Future<void> _signIn() async {
@@ -169,7 +170,8 @@ class _LoginState extends State<Login> {
                                       onPressed: _signIn,
                                     ))),
                           ],
-                        )),
+                        )
+                        ),
                     Divider(height: 50),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

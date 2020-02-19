@@ -73,7 +73,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                         child: Column(
                           children: <Widget>[
                             TextFormField(
-                              keyboardType: TextInputType.text,
+                              keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
                                   labelText: "Mail",
                                   icon: const Icon(Icons.person)),

@@ -36,7 +36,7 @@ class _HomeState extends Logged<Home> {
     Color color = Color.fromRGBO(250, 0, 0, 0.7);
 
     //a justifier : rouge
-    if (studentPresence.absence.justification == "") {
+    if (studentPresence.absence.justification == "" || studentPresence.absence.justification == null) {
       label = 'A justifier';
       color = Color.fromRGBO(250, 0, 0, 0.7);
     }
@@ -46,7 +46,7 @@ class _HomeState extends Logged<Home> {
       color = Color.fromRGBO(250, 150, 0, 0.7);
     }*/
     //validé : vert
-    else if (studentPresence.absence.justification != "") {
+    else if (studentPresence.absence.justification != "" || studentPresence.absence.justification != null) {
       label = 'Justifiée';
       color = Color.fromRGBO(0, 150, 0, 0.7);
     }
