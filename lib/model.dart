@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:heimdall/heimdall_api.dart';
@@ -28,7 +26,8 @@ class AppModel extends Model {
   }
 
   Future<void> signOut() async {
-    await api.delete('token/refresh');
+    //await api.delete('token/refresh');
+    api.userToken = null;
     user = null;
     deleteStoredToken();
   }

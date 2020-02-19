@@ -58,7 +58,7 @@ class App extends StatelessWidget {
                       return Container(child: Center(child: CircularProgressIndicator()), color: Colors.white);
                     default:
                       if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}'); // TODO : Gestion erreur
+                        return Text('Error: ${snapshot.error}');
                       } else {
                         if (snapshot.data != null) {
                           if (model.user is Etudiant) {

@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:heimdall/exceptions/api_connect.dart';
 import 'package:heimdall/exceptions/auth.dart';
 import 'package:heimdall/model/_absencetudiant.dart';
+import 'package:heimdall/model/_seance.dart';
 import 'package:heimdall/model/etudiant.dart';
 import 'package:heimdall/model/rollcall.dart';
 import 'package:heimdall/model/student_presence.dart';
@@ -38,9 +39,9 @@ class HeimdallApi {
     return new List<ClassGroup>.from(result.map((x) => ClassGroup.fromJson(x)));
   }
 
-  Future<List<RollCall>> getRollCalls() async {
-    dynamic result = await get('rollcall', authHeader);
-    return new List<RollCall>.from(result.map((x) => RollCall.fromJson(x)));
+  Future<List<Seance>> getRollCalls() async {
+    dynamic result = await get('absence/professeur/seances', authHeader);
+    return new List<Seance>.from(result.map((x) => Seance.fromJson(x)));
   }
 
   Future<List<RollCall>> getRollCallsLastWeek() async {
@@ -49,7 +50,7 @@ class HeimdallApi {
   }
 
   Future<RollCall> updateRollCall(RollCall rollCall) async {
-    dynamic result = await put('rollcall/${rollCall.id}', rollCall.toJson());
+    dynamic result = await put('rollcall/${rollCall.id}', rollCall.toJson(), authHeader);
     return RollCall.fromJson(result);
   }
 
@@ -74,7 +75,7 @@ class HeimdallApi {
     return new List<String>.from(result);
   }
 
-  void ResetPassword() async {
+  void resetPassword() async {
     dynamic result = await get('student/reset_password');
   }
 
@@ -171,14 +172,14 @@ class HeimdallApi {
     return _sendRequest(new http.Request("GET", getApiUri(endpoint, parameters)));
   }
 
-  Future<dynamic> post(String endpoint, Map<String, dynamic> data) async {
-    final http.Request request = new http.Request("POST", getApiUri(endpoint));
+  Future<dynamic> post(String endpoint, Map<String, dynamic> data, [Map<String, String> parameters]) async {
+    final http.Request request = new http.Request("POST", getApiUri(endpoint, parameters));
     request.body = json.encode(data);
     return _sendRequest(request);
   }
 
-  Future<dynamic> put(String endpoint, Map<String, dynamic> data) async {
-    final http.Request request = new http.Request("POST", getApiUri(endpoint));
+  Future<dynamic> put(String endpoint, Map<String, dynamic> data, [Map<String, String> parameters]) async {
+    final http.Request request = new http.Request("POST", getApiUri(endpoint, parameters));
     request.body = json.encode(data);
     return _sendRequest(request);
   }

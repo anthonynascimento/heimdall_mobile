@@ -4,6 +4,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:heimdall/heimdall_api.dart';
 import 'package:heimdall/model.dart';
 import 'package:heimdall/model/user.dart';
+import 'package:heimdall/ui/pages/etudiant/account.dart' as student_account;
+import 'package:heimdall/ui/pages/professeur/account.dart' as teacher_account;
 
 abstract class Logged<T extends StatefulWidget> extends State<T> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -82,9 +84,22 @@ abstract class Logged<T extends StatefulWidget> extends State<T> {
           IconButton(
             icon: Icon(FontAwesomeIcons.solidUserCircle),
             onPressed: () {
-              String typeUs = api.userType;
-              print(context);
-              changeRoute(context, '/account', roleSpecific: true);
+              if(api.userType == 'etudiant') {
+                print(api.userType);
+                print(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => student_account.Account()),
+                );
+              }
+              else if(api.userType == 'professeur') {
+                                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => teacher_account.Account()),
+                );
+              }
+
+              //changeRoute(context, '/etudiant/account');
             },
           ),
         ],

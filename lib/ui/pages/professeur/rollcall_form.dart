@@ -273,7 +273,7 @@ class _RollCallFormState extends Logged<RollCallForm> {
         padding: EdgeInsets.only(top: 20, left: 5, right: 5),
         child: Column(
             children: <Widget>[
-              Card(
+              /*Card(
                 child: Column(
                   children: <Widget>[
                     Row(
@@ -323,8 +323,8 @@ class _RollCallFormState extends Logged<RollCallForm> {
                     )
                   ],
                 ),
-              ),
-              Expanded(
+              ),*/
+              /*Expanded(
                   child: Card(
                       child: _loadingStudents ? Center(child: Stack(
                           children: <Widget>[CircularProgressIndicator()]))
@@ -371,7 +371,7 @@ class _RollCallFormState extends Logged<RollCallForm> {
                           }
                       )
                   )
-              ),
+              ),*/
         SizedBox(
             width: double.infinity,
             child: RaisedButton(

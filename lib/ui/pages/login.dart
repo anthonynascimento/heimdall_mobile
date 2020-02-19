@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:heimdall/exceptions/api_connect.dart';
@@ -7,7 +5,6 @@ import 'package:heimdall/exceptions/auth.dart';
 import 'package:heimdall/helper/validation.dart';
 import 'package:heimdall/model.dart';
 import 'package:heimdall/ui/components/password_field.dart';
-import "package:http/http.dart" as http;
 
 class Login extends StatefulWidget {
   @override
@@ -19,7 +16,6 @@ class _LoginState extends State<Login> {
   String verificationId;
   LoginFormData _data = LoginFormData();
   TextEditingController _urlController = TextEditingController();
-  bool _urlIsValid;
   FocusNode _urlFocus = FocusNode();
   FocusNode _usernameFocus = FocusNode();
   FocusNode _passwordFocus = FocusNode();
@@ -36,7 +32,6 @@ class _LoginState extends State<Login> {
     });
   }
 
-  // TODO : Nice dialog with real error handling
   void _showLoginErrorDialog(e) {
     showDialog(
         context: context,
@@ -64,7 +59,6 @@ class _LoginState extends State<Login> {
 
     setState(() {
       _urlController.text = url;
-      this._urlIsValid = true;
     });
 
     return url;
@@ -97,7 +91,7 @@ class _LoginState extends State<Login> {
           _loading = false;
         });
       } catch (e) {
-        print(e); // TODO handler
+        print(e);
         setState(() {
           _loading = false;
         });

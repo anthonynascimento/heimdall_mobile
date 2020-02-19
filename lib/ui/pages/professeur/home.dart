@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:heimdall/model/rollcall.dart';
+import 'package:heimdall/model/_seance.dart';
 import 'package:heimdall/ui/pages/logged.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
-import '../../../model/rollcall.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -13,7 +12,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends Logged<Home> {
-  List<RollCall> _rollCalls = [];
+  List<Seance> _rollCalls = [];
   bool includeBaseContainer = false;
 
   @override
@@ -28,14 +27,14 @@ class _HomeState extends Logged<Home> {
 
   void _getRollCalls() async {
     await initializeDateFormatting('fr_FR', null);
-    List<RollCall> rollCalls = await api.getRollCalls();
+    List<Seance> rollCalls = await api.getRollCalls();
       setState(() {
         _rollCalls = rollCalls;
         loading = false;
       });
   }
 
-  void _showRollcallForm([RollCall rollcall]) async {
+  void _showRollcallForm([Seance rollcall]) async {
     dynamic returnedRollcall = await Navigator.of(context).pushNamed('/professeur/rollcall', arguments: rollcall);
     if (returnedRollcall != null) {
       showSnackBar(SnackBar(
@@ -72,10 +71,12 @@ class _HomeState extends Logged<Home> {
         itemCount: _rollCalls.length,
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
-            title: Text(_rollCalls[index].classGroup.name),
-            subtitle: Text("${DateFormat('EEEE dd MMM yyy').format(_rollCalls[index].dateStart)} de ${_rollCalls[index].startAt.format(context)} à ${_rollCalls[index].endAt.format(context)} (${_rollCalls[index].diff.inHours}h)"),
-            trailing: _rollCalls[index].isPassed ? Chip(label: Text('Terminé'), backgroundColor: Color.fromRGBO(0, 150, 0, 0.7)) : Chip(label: Text('En cours'), backgroundColor: Color.fromRGBO(255, 150, 0, 0.7)),
-            onTap: _rollCalls[index].isPassed ? null : () => _showRollcallForm(_rollCalls[index]),
+            title: Text(_rollCalls[index].dateSeance),
+            subtitle: Text("${_rollCalls[index].dateStart} à ${_rollCalls[index].dateEnd}"),
+            trailing: Chip(label: Text('Accéder'), backgroundColor: Color.fromRGBO(255, 150, 0, 0.7)),
+            onTap:  () => _showRollcallForm(_rollCalls[index]),            
+            /*trailing: _rollCalls[index].isPassed ? Chip(label: Text('Terminé'), backgroundColor: Color.fromRGBO(0, 150, 0, 0.7)) : Chip(label: Text('En cours'), backgroundColor: Color.fromRGBO(255, 150, 0, 0.7)),
+            onTap: _rollCalls[index].isPassed ? null : () => _showRollcallForm(_rollCalls[index]),*/
           );
         }
     );

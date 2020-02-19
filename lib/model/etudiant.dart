@@ -6,7 +6,7 @@ class Etudiant extends User {
   String photo;
   ClassGroup classGroup;
   List<StudentPresence> presences;
-  String get type => 'student';
+  String get type => 'etudiant';
 
   Etudiant(
       {int id, String username, String firstname, String lastname, DateTime lastLogin, this.photo, this.classGroup, this.presences})

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:heimdall/model/_absencetudiant.dart';
 import 'package:heimdall/ui/pages/logged.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class Home extends StatefulWidget {
@@ -59,7 +58,7 @@ class _HomeState extends Logged<Home> {
   }
 
   _showPresence(int index) async {
-    dynamic returnedPresence = await Navigator.pushNamed(context, '/student/justify', arguments: _studentPresences[index]);
+    dynamic returnedPresence = await Navigator.pushNamed(context, '/etudiant/justify', arguments: _studentPresences[index]);
     if (returnedPresence != null) {
       showSnackBar(SnackBar(
         content: Text("La justification a été envoyée."),
@@ -74,13 +73,12 @@ class _HomeState extends Logged<Home> {
   ListTile _buildItemsForListView(BuildContext context, int index) {
     return ListTile(
       title: Text((_studentPresences[index].absence.absent ? "Absence" : "Retard")),
-      subtitle: Text("${_studentPresences[index].seance.dateSeance} (${_studentPresences[index].seance.dateStart}-${_studentPresences[index].seance.dateStart})"),
-      //subtitle: _studentPresences[index].absence.absent ? Text("${_studentPresences[index].seance.dateStart} de ${_studentPresences[index].seance.dateStart} à ${_studentPresences[index].seance.dateEnd}")
-         // : Text("${_studentPresences[index].absence.retard}m le ${_studentPresences[index].seance.dateStart}"),
+      subtitle: _studentPresences[index].absence.absent ? Text("${_studentPresences[index].seance.dateSeance} (${_studentPresences[index].seance.dateStart}-${_studentPresences[index].seance.dateStart})")
+       : Text("${_studentPresences[index].absence.retard} min le ${_studentPresences[index].seance.dateSeance}"),
       trailing: _getPresenceValidationStatus(_studentPresences[index]),
-      onTap: _studentPresences[index].absence.justification == null || _studentPresences[index].absence.justification == ""
-          ? () => _showPresence(index)
-          : null,
+      onTap: //_studentPresences[index].absence.justification == null || _studentPresences[index].absence.justification == ""
+         /* ?*/ () => _showPresence(index)
+         // : null,
     );
   }
 

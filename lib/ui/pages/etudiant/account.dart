@@ -44,7 +44,6 @@ class _AccountState extends Logged<Account> with WidgetsBindingObserver {
       });
       if (url != null) {
         setState(() {
-          // TODO : Cheat, to do better (work only once)
           student.photo = url + "?v=" + (Random()).nextInt.toString();
         });
       }
