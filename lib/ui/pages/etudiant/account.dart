@@ -11,6 +11,7 @@ import 'package:heimdall/ui/components/password_field.dart';
 import 'package:heimdall/ui/pages/logged.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
+import "package:http/http.dart" as http;
 
 class Account extends StatefulWidget {
   @override
@@ -34,30 +35,16 @@ class _AccountState extends Logged<Account> with WidgetsBindingObserver {
     student = user; // Cast user as student
   }
 
-
-  Future<void> _changeAvatar() async {
-    File avatarFile = await ImagePicker.pickImage(source: ImageSource.gallery, maxHeight: 200, maxWidth: 200);
-    if (avatarFile != null) {
-      String url = await api.post('student/photo', {
-        'photoBase64': base64Encode(avatarFile.readAsBytesSync()),
-        'extension': p.extension(avatarFile.path)
-      });
-      if (url != null) {
-        setState(() {
-          student.photo = url + "?v=" + (Random()).nextInt.toString();
-        });
-      }
-    }
-  }
-
   Future<void> _updatePassword() async {
     FocusScope.of(context).requestFocus(new FocusNode()); // reset focus
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      await AppModel
-          .of(context)
-          .api
-          .post('student/update_password', _data);
+            String url = 'http://192.168.1.44:8000/api/utilisateur/modifier_mdp';
+    Map<String,String> body = {"password": _data["newPassword"]};
+      http.put(Uri.encodeFull(url), body: body , headers: { "Accept" : "application/json", "Authorization": "token ${api.userToken}"}).then((result) {
+        print(result.statusCode);
+        print(result.body);
+        });
 
       _data.clear();
       setState(() {
@@ -80,24 +67,6 @@ class _AccountState extends Logged<Account> with WidgetsBindingObserver {
     SafeArea(
         child: CustomScrollView(
           slivers: <Widget>[
-            SliverAppBar(
-              pinned: true,
-              floating: false,
-              snap: false,
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Modifier la photo'),
-                  onPressed: _changeAvatar,
-                ),
-              ],
-              expandedHeight: 250.0,
-              flexibleSpace: FlexibleSpaceBar(
-                background: student.photo != null ? Image(
-                  fit: BoxFit.cover,
-                  image: NetworkImage(student.photo, headers: api.authHeader),
-                ) : null,
-              ),
-            ),
             SliverList(
               delegate: SliverChildListDelegate([
 

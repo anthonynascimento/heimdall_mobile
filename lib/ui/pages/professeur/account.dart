@@ -5,6 +5,7 @@ import 'package:heimdall/ui/components/loading_button.dart';
 import 'package:heimdall/ui/components/named_card.dart';
 import 'package:heimdall/ui/components/password_field.dart';
 import 'package:heimdall/ui/pages/logged.dart';
+import "package:http/http.dart" as http;
 
 class Account extends StatefulWidget {
   @override
@@ -32,7 +33,12 @@ class _AccountState extends Logged<Account> with WidgetsBindingObserver {
     FocusScope.of(context).requestFocus(new FocusNode()); // reset focus
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      await api.post('teacher/update_password', _data);
+      String url = 'http://192.168.1.44:8000/api/utilisateur/modifier_mdp';
+    Map<String,String> body = {"password": _data["newPassword"]};
+      http.put(Uri.encodeFull(url), body: body , headers: { "Accept" : "application/json", "Authorization": "token ${api.userToken}"}).then((result) {
+        print(result.statusCode);
+        print(result.body);
+        });
 
       _data.clear();
       setState(() {

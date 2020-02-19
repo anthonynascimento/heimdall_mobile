@@ -44,9 +44,9 @@ class Seance {
 
   factory Seance.fromJson(Map<String, dynamic> json) => new Seance(
     id: json["id"],
-    dateSeance: json["date_seance"].toString().substring(0,json["date_seance"].toString().indexOf("T")),
-    dateStart: json["heure_deb"].toString().substring(0,5),
-    dateEnd: json["heure_fin"].toString().substring(0,5),
+    dateSeance: json["date_seance"],
+    dateStart: json["heure_deb"].toString(),
+    dateEnd: json["heure_fin"].toString()
   );
 
   Map<String, dynamic> toJson({bool forApi = true}) => {
