@@ -4,17 +4,15 @@ import 'package:heimdall/model/professeur.dart';
 
 class ClassGroup {
   int id;
-  String name;
-  List<Etudiant> students;
-  List<Professeur> teachers;
-  List<RollCall> rollCalls;
+  String nompromotion;
+  String statuspromotion;
+  String anneefiliere;
 
   ClassGroup({
     this.id,
-    this.name,
-    this.students,
-    this.teachers,
-    this.rollCalls,
+    this.nompromotion,
+    this.statuspromotion,
+    this.anneefiliere
   });
 
   factory ClassGroup.fromApi(dynamic data) {
@@ -29,17 +27,17 @@ class ClassGroup {
 
   factory ClassGroup.fromJson(Map<String, dynamic> json) => new ClassGroup(
     id: json["id"],
-    name: json["name"],
-    students: json["students"] == null ? null : new List<Etudiant>.from(json["students"].map((x) => Etudiant.fromApi(x))),
-    teachers: json["teachers"] == null ? null : new List<Professeur>.from(json["teachers"].map((x) => Professeur.fromApi(x))),
-    rollCalls: json["roll_calls"] == null ? null : new List<RollCall>.from(json["roll_calls"].map((x) => RollCall.fromApi(x))),
+    nompromotion: json["nom_promotion"],
+    statuspromotion: json["status_promotion"],
+    anneefiliere: json["annee_filiere"],
+   
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "name": name,
-    "students": students == null ? null : new List<dynamic>.from(students.map((x) => x.toJson())),
-    "teachers": teachers == null ? null : new List<dynamic>.from(teachers.map((x) => x.toJson())),
-    "roll_calls": rollCalls == null ? null : new List<dynamic>.from(rollCalls.map((x) => x.toJson())),
+    "nom_promotion": nompromotion,
+    "status_promotion": statuspromotion,
+    "annee_filiere": anneefiliere
+    
   };
 }

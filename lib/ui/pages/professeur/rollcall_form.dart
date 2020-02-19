@@ -88,7 +88,7 @@ class _RollCallFormState extends Logged<RollCallForm> {
             // return object of type Dialog
             return AlertDialog(
               title: new Text("Continuer l'appel ?"),
-              content: new Text('Vous avez déjà un appel en cours (non validé) le ${DateFormat('dd/MM/yyy à kk:mm').format(rollCall.dateStart)} avec la classe "${rollCall.classGroup.name}", voulez-vous le récupérer ?'),
+              content: new Text('Vous avez déjà un appel en cours (non validé) le ${DateFormat('dd/MM/yyy à kk:mm').format(rollCall.dateStart)} avec la classe "${rollCall.classGroup.nompromotion}", voulez-vous le récupérer ?'),
               actions: <Widget>[
                 new FlatButton(
                   child: new Text("Supprimer cet appel"),
@@ -143,7 +143,7 @@ class _RollCallFormState extends Logged<RollCallForm> {
     for (ClassGroup classGroup in _classGroups) {
       items.add(new DropdownMenuItem(
           value: classGroup,
-          child: new Text(classGroup.name)
+          child: new Text(classGroup.nompromotion)
       ));
     }
     return items;
@@ -157,6 +157,7 @@ class _RollCallFormState extends Logged<RollCallForm> {
     List<Etudiant> students = await api.getStudentsInClass(classGroup.id);
     List<StudentPresence> presences = new List<StudentPresence>();
     for (Etudiant student in students) {
+      print(student.type);
       presences.add(new StudentPresence(student: student, present: true));
     }
     setState(() {
@@ -273,7 +274,7 @@ class _RollCallFormState extends Logged<RollCallForm> {
         padding: EdgeInsets.only(top: 20, left: 5, right: 5),
         child: Column(
             children: <Widget>[
-              /*Card(
+              Card(
                 child: Column(
                   children: <Widget>[
                     Row(
@@ -323,8 +324,8 @@ class _RollCallFormState extends Logged<RollCallForm> {
                     )
                   ],
                 ),
-              ),*/
-              /*Expanded(
+              ),
+              Expanded(
                   child: Card(
                       child: _loadingStudents ? Center(child: Stack(
                           children: <Widget>[CircularProgressIndicator()]))
@@ -354,12 +355,6 @@ class _RollCallFormState extends Logged<RollCallForm> {
                                     bottom: 38,
                                     top: 5),
                                 dense: true,
-                                leading: studentPresence.student.photo == null
-                                    ? Icon(Icons.person, size: 80)
-                                    : Image.network(
-                                    studentPresence.student.photo,
-                                    headers: api.authHeader,
-                                    height: 80),
                                 trailing: IconButton(
                                   icon: Icon(Icons.access_time),
                                   onPressed: () =>
@@ -371,7 +366,7 @@ class _RollCallFormState extends Logged<RollCallForm> {
                           }
                       )
                   )
-              ),*/
+              ),
         SizedBox(
             width: double.infinity,
             child: RaisedButton(

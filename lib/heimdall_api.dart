@@ -25,8 +25,8 @@ class HeimdallApi {
   http.Client client = new http.Client();
 
   Future<List<Etudiant>> getStudentsInClass(int classId) async {
-    dynamic result = await get('promotions/etudiants/$classId/students');
-    return new List<Etudiant>.from(result.map((x) => Etudiant.fromJson(x)));
+    dynamic result = await get('absence/promotions/etudiants/$classId');
+    return new List<Etudiant>.from(result.map((x) => Etudiant.fromJson(x['user'])));
   }
 
   Future<User> getUserFromToken(String token) async {
