@@ -1,13 +1,7 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:heimdall/model/_absencetudiant.dart';
-import 'package:heimdall/model/student_presence.dart';
+import 'package:heimdall/model/_absenceseance.dart';
 import 'package:heimdall/ui/components/named_card.dart';
 import 'package:heimdall/ui/pages/logged.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as p;
 import "package:http/http.dart" as http;
 
 class Justify extends StatefulWidget {
@@ -15,7 +9,7 @@ class Justify extends StatefulWidget {
   State createState() => _JustifyState();
 }
 class _JustifyState extends Logged<Justify> {
-  AbsenceEtudiant absence;
+  AbsenceSeance absence;
   bool includeBaseContainer = false;
   String justification;
   final motifController = TextEditingController();

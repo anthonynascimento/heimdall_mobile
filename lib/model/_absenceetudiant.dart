@@ -1,17 +1,18 @@
 import 'dart:core';
 
-import 'package:heimdall/model/_absenceseance.dart';
+import 'package:heimdall/model/_absence.dart';
 import 'package:heimdall/model/_seance.dart';
+import 'package:heimdall/model/etudiant.dart';
 
 class AbsenceEtudiant {
   int id;
-  AbsenceSeance absence;
-  Seance seance;
+  Absence absence;
+  Etudiant etudiant;
 
   AbsenceEtudiant({
     this.id,
     this.absence,
-    this.seance,
+    this.etudiant,
   });
 
   factory AbsenceEtudiant.fromApi(dynamic data) {
@@ -26,13 +27,13 @@ class AbsenceEtudiant {
 
   factory AbsenceEtudiant.fromJson(Map<String, dynamic> json) => new AbsenceEtudiant(
     id: json["id"],
-    seance: json["seance"] == null ? null : Seance.fromApi(json["seance"]),
-    absence: json["absence_seance"] == null ? null : AbsenceSeance.fromApi(json["absence_seance"]),
+    etudiant: json["etudiant"] == null ? null : Etudiant.fromApi(json["etudiant"]),
+    absence: json["absence_etudiant"] == null ? null : Absence.fromApi(json["absence_etudiant"]),
   );
 
   Map<String, dynamic> toJson({bool forApi = true}) => {
     "id": id,
-    "seance": seance == null ? null : seance.toJson(),
-    "absence_seance": forApi ? absence.id : absence.toJson(),
+    "etudiant": etudiant == null ? null : etudiant.toJson(),
+    "absence_etudiant": forApi ? absence.id : absence.toJson(),
   };
 }

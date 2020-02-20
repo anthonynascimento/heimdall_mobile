@@ -1,3 +1,6 @@
+import 'package:heimdall/model/_matiere.dart';
+import 'package:heimdall/model/class_group.dart';
+
 class Seance {
   int id;
   String dateSeance;
@@ -24,28 +27,6 @@ class Seance {
   String heureFinBonFormat() {
     return this.dateEnd.substring(0,5);
   }
-    /*{
-    if (dateStart == null) dateStart = new DateTime.now();
-    if (dateEnd == null) dateEnd = new DateTime.now().add(new Duration(hours: 2));
-  }
-
-  set startAt(TimeOfDay startAt) {
-    final now = new DateTime.now();
-    dateStart = new DateTime(now.year, now.month, now.day, startAt.hour, startAt.minute);
-  }
-  TimeOfDay get startAt => dateStart == null ? null : new TimeOfDay(hour: dateStart.hour, minute: dateStart.minute);
-
-  set endAt(TimeOfDay endAt) {
-    final now = new DateTime.now();
-    dateEnd = new DateTime(now.year, now.month, now.day, endAt.hour, endAt.minute);
-  }
-  TimeOfDay get endAt => dateEnd == null ? null : new TimeOfDay(hour: dateEnd.hour, minute: dateEnd.minute);
-
-  Duration get diff {
-    return dateEnd.difference(dateStart);
-  }
-
-  bool get isPassed => dateEnd == null ? null : dateEnd.isBefore(new DateTime.now());*/
 
   factory Seance.fromApi(dynamic data) {
     if (data is int) {

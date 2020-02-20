@@ -13,6 +13,7 @@ import 'package:heimdall/ui/pages/etudiant/justify.dart';
 import 'package:heimdall/ui/pages/professeur/account.dart' as teacher_account;
 import 'package:heimdall/ui/pages/professeur/home.dart' as teacher_home;
 import 'package:heimdall/ui/pages/professeur/rollcall_form.dart';
+import 'package:heimdall/ui/pages/professeur/updaterollcall_form.dart';
 import 'package:intl/intl.dart';
 import 'package:scoped_model/scoped_model.dart'; //One Signal for push notification system
 
@@ -87,6 +88,7 @@ class App extends StatelessWidget {
               '/professeur/home': (context) => teacher_home.Home(),
               '/professeur/account': (context) => teacher_account.Account(),
               '/professeur/rollcall': (context) => RollCallForm(),
+              '/professeur/updaterollcall': (context) => UpdateRollCallForm(),
             }),
       );
   }

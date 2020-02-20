@@ -1,22 +1,18 @@
 import 'dart:core';
 
+import 'package:heimdall/model/_absence.dart';
+import 'package:heimdall/model/_seance.dart';
+
 class AbsenceSeance {
   int id;
-  bool absent;
-  int retard;
-  String justification;
+  Absence absence;
+  Seance seance;
 
   AbsenceSeance({
     this.id,
-    this.absent,
-    this.retard,
-    this.justification,
+    this.absence,
+    this.seance,
   });
-
-  String typeAbsence() {
-    if(this.absent) return "Absence";
-    return "Retard";
-  }
 
   factory AbsenceSeance.fromApi(dynamic data) {
     if (data is int) {
@@ -30,15 +26,13 @@ class AbsenceSeance {
 
   factory AbsenceSeance.fromJson(Map<String, dynamic> json) => new AbsenceSeance(
     id: json["id"],
-    absent: json["absent"],
-    retard: json["retard"],
-    justification: json["justification"],
+    seance: json["seance"] == null ? null : Seance.fromApi(json["seance"]),
+    absence: json["absence_seance"] == null ? null : Absence.fromApi(json["absence_seance"]),
   );
 
   Map<String, dynamic> toJson({bool forApi = true}) => {
     "id": id,
-    "absent": absent,
-    "retard": retard,
-    "justification": justification,
+    "seance": seance == null ? null : seance.toJson(),
+    "absence_seance": forApi ? absence.id : absence.toJson(),
   };
 }

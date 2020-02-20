@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:heimdall/exceptions/api_connect.dart';
 import 'package:heimdall/exceptions/auth.dart';
-import 'package:heimdall/model/_absencetudiant.dart';
+import 'package:heimdall/model/_absenceseance.dart';
 import 'package:heimdall/model/_seance.dart';
 import 'package:heimdall/model/etudiant.dart';
 import 'package:heimdall/model/rollcall.dart';
@@ -59,10 +59,10 @@ class HeimdallApi {
     return RollCall.fromJson(result);
   }
 
-  Future<List<AbsenceEtudiant>> getStudentPresences() async {
+  Future<List<AbsenceSeance>> getStudentPresences() async {
     dynamic result = await get('absence/etudiant', authHeader);
     print(result);
-    return new List<AbsenceEtudiant>.from(result.map((x) => AbsenceEtudiant.fromJson(x)));
+    return new List<AbsenceSeance>.from(result.map((x) => AbsenceSeance.fromJson(x)));
   }
 
   Future<List<StudentPresence>> getStudentRetards() async {

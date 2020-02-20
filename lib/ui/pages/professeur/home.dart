@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:heimdall/model/_seance.dart';
 import 'package:heimdall/ui/pages/logged.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
 
 
 class Home extends StatefulWidget {
@@ -55,6 +54,27 @@ class _HomeState extends Logged<Home> {
     }
   }
 
+  void _showUdpateRollcallForm([Seance rollcall]) async {
+    dynamic returnedRollcall = await Navigator.of(context).pushNamed('/professeur/updaterollcall', arguments: rollcall);
+    if (returnedRollcall != null) {
+      showSnackBar(SnackBar(
+        content: Text("L'appel a bien été enregistré."),
+        backgroundColor: Colors.lightGreen,
+      ));
+      int rollcallKey = _rollCalls.indexWhere((rollcall) => rollcall.id == returnedRollcall.id);
+      print(rollcallKey);
+      if (rollcallKey == -1) {
+        setState(() {
+          _rollCalls.insert(0, returnedRollcall);
+        });
+      } else {
+        setState(() {
+          _rollCalls[rollcallKey] = returnedRollcall;
+        });
+      }
+    }
+  }
+
   @override
   Widget getFloatingButton() {
     return FloatingActionButton(
@@ -74,7 +94,8 @@ class _HomeState extends Logged<Home> {
             title: Text(_rollCalls[index].dateSeance),
             subtitle: Text("${_rollCalls[index].dateStart} à ${_rollCalls[index].dateEnd}"),
             trailing: Chip(label: Text('Accéder'), backgroundColor: Color.fromRGBO(255, 150, 0, 0.7)),
-            onTap:  () => _showRollcallForm(_rollCalls[index]),            
+            //onTap: () => null,
+            onTap:  () => _showUdpateRollcallForm(_rollCalls[index]),            
             /*trailing: _rollCalls[index].isPassed ? Chip(label: Text('Terminé'), backgroundColor: Color.fromRGBO(0, 150, 0, 0.7)) : Chip(label: Text('En cours'), backgroundColor: Color.fromRGBO(255, 150, 0, 0.7)),
             onTap: _rollCalls[index].isPassed ? null : () => _showRollcallForm(_rollCalls[index]),*/
           );

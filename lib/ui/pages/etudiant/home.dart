@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:heimdall/model/_absencetudiant.dart';
+import 'package:heimdall/model/_absenceseance.dart';
 import 'package:heimdall/ui/pages/logged.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -11,7 +11,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends Logged<Home> {
 
-  List<AbsenceEtudiant> _studentPresences = List<AbsenceEtudiant>();
+  List<AbsenceSeance> _studentPresences = List<AbsenceSeance>();
   bool includeBaseContainer = false;
   RefreshController _refreshController = RefreshController(initialRefresh:false);
 
@@ -22,7 +22,7 @@ class _HomeState extends Logged<Home> {
 
   void _getPresence() async {
     await initializeDateFormatting('fr_FR', null);
-    List<AbsenceEtudiant> studentPresences = await api.getStudentPresences();
+    List<AbsenceSeance> studentPresences = await api.getStudentPresences();
     if(mounted)
     setState(() {
       _studentPresences = studentPresences;
@@ -31,7 +31,7 @@ class _HomeState extends Logged<Home> {
     _refreshController.refreshCompleted();
   }
 
-  Widget _getPresenceValidationStatus(AbsenceEtudiant studentPresence) {
+  Widget _getPresenceValidationStatus(AbsenceSeance studentPresence) {
     String label = 'Justificatif refusé';
     Color color = Color.fromRGBO(250, 0, 0, 0.7);
 
