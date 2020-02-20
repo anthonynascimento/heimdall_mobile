@@ -32,12 +32,14 @@ class _JustifyState extends Logged<Justify> {
 
   Future<void> _saveJustification() async {
     print(motifController.text);
+
     if (motifController.text != "") {
+
       setState(() {
         loading = true;
       });
       try {
-        String url = '${api.apiUrl}/etudiant/justification/${absence.id}';
+        String url = '${api.apiUrl}/absence/etudiant/justification/${absence.id}';
         print(url);
     Map<String,String> body = {"justification": motifController.text};
     Map<String,String> headers = { "Accept" : "application/json", "Authorization": "token ${api.userToken}"};
@@ -51,7 +53,7 @@ class _JustifyState extends Logged<Justify> {
         print(e);
       }
       showSnackBar(SnackBar(content: Text('Insertion faite'), backgroundColor: Colors.green));
-
+      Navigator.pop(context);
       /*if (returnedPresence != null) {
         Navigator.pop(context, returnedPresence);
       } else {
@@ -70,6 +72,11 @@ class _JustifyState extends Logged<Justify> {
     return Padding(
         padding: EdgeInsets.only(top: 20, left: 5, right: 5),
         child: Column(children: <Widget>[
+          Text("${absence.absence.typeAbsence()}", style: TextStyle(fontSize: 30.0),),
+          Text("${absence.seance.dateBonFormat()}", style: TextStyle(fontSize: 15.0),),
+          Text("Séance de ${absence.seance.heureDebBonFormat()} à ${absence.seance.heureFinBonFormat()}"),
+          Text(absence.absence.retard!=0 ?"Retard de ${absence.absence.retard} min" : ""),
+          
           NamedCard(
             title: 'Raison',
             children: <Widget>[
@@ -77,7 +84,6 @@ class _JustifyState extends Logged<Justify> {
                 child: TextFormField(
                               keyboardType: TextInputType.text,
                               decoration: InputDecoration(
-                                  labelText: "Raison",
                                   icon: const Icon(Icons.keyboard_arrow_right)),
                               controller: motifController,
                             ),

@@ -73,12 +73,12 @@ class _HomeState extends Logged<Home> {
   ListTile _buildItemsForListView(BuildContext context, int index) {
     return ListTile(
       title: Text((_studentPresences[index].absence.absent ? "Absence" : "Retard")),
-      subtitle: _studentPresences[index].absence.absent ? Text("${_studentPresences[index].seance.dateSeance} (${_studentPresences[index].seance.dateStart}-${_studentPresences[index].seance.dateStart})")
+      subtitle: _studentPresences[index].absence.absent ? Text("${_studentPresences[index].seance.dateBonFormat()} (${_studentPresences[index].seance.heureDebBonFormat()}-${_studentPresences[index].seance.heureFinBonFormat()})")
        : Text("${_studentPresences[index].absence.retard} min le ${_studentPresences[index].seance.dateSeance}"),
       trailing: _getPresenceValidationStatus(_studentPresences[index]),
-      onTap: //_studentPresences[index].absence.justification == null || _studentPresences[index].absence.justification == ""
-         /* ?*/ () => _showPresence(index)
-         // : null,
+      onTap: _studentPresences[index].absence.justification == null || _studentPresences[index].absence.justification == ""
+         ? () => _showPresence(index)
+          : null,
     );
   }
 

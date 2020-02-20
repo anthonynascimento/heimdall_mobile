@@ -13,6 +13,11 @@ class AbsenceSeance {
     this.justification,
   });
 
+  String typeAbsence() {
+    if(this.absent) return "Absence";
+    return "Retard";
+  }
+
   factory AbsenceSeance.fromApi(dynamic data) {
     if (data is int) {
       return new AbsenceSeance(id: data);

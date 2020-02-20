@@ -9,7 +9,22 @@ class Seance {
     this.dateSeance,
     this.dateStart,
     this.dateEnd,
-  }); /*{
+  });
+  
+
+  String dateBonFormat() {
+    List<String> liste = this.dateSeance.split('-');
+    return liste[2]+'/'+liste[1]+'/'+liste[0];
+  }
+
+  String heureDebBonFormat() {
+    return this.dateStart.substring(0,5);
+  }
+
+  String heureFinBonFormat() {
+    return this.dateEnd.substring(0,5);
+  }
+    /*{
     if (dateStart == null) dateStart = new DateTime.now();
     if (dateEnd == null) dateEnd = new DateTime.now().add(new Duration(hours: 2));
   }
