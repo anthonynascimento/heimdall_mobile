@@ -105,6 +105,7 @@ class HeimdallApi {
   }
 
   String get serverRootUrl {
+    apiUrlHostname = apiUrlHostname + ":8080";
     return apiUrlProtocol + '://' + apiUrlHostname + '/';
   }
 
@@ -112,6 +113,10 @@ class HeimdallApi {
     if (apiUrlProtocol == null || apiUrlHostname == null || apiUrlBaseEndpoint == null) {
       return null;
     }
+    if(apiUrlHostname != null && !apiUrlHostname.contains(":8000")) {
+      apiUrlHostname = apiUrlHostname + ":8000";
+    }
+
     String url = apiUrlProtocol + '://' + apiUrlHostname + apiUrlBaseEndpoint;
     return url;
   }
@@ -120,7 +125,7 @@ class HeimdallApi {
     Uri uri = Uri.parse(url);
     apiUrlProtocol = uri.scheme;
     apiUrlHostname = uri.host;
-    if(!apiUrlHostname.endsWith(':8000')) {
+    if(!apiUrlHostname.endsWith(':8000') || !apiUrlHostname.contains(":8000")) {
       apiUrlHostname = apiUrlHostname + ':8000';
     }
     apiUrlBaseEndpoint = uri.path;
@@ -131,6 +136,9 @@ class HeimdallApi {
 
   Uri getApiUri(String endpoint, [Map<String, String> parameters]) {
     Uri uri;
+    if(apiUrlHostname!= null && !apiUrlHostname.contains(":8000")) {
+      apiUrlHostname = apiUrlHostname + ':8000';
+    }
     if (apiUrlProtocol == 'https') {
       uri = Uri.https(apiUrlHostname, apiUrlBaseEndpoint + '/' + endpoint, parameters);
     } else {
@@ -258,7 +266,7 @@ class HeimdallApi {
       // Save the url & token on the phone to be able to reconnect the user later
       final storage = new FlutterSecureStorage();
       storage.write(key: 'apiUrl', value: apiUrl);
-      storage.write(key: 'userToken', value: json.encode(userToken));
+      storage.write(key: 'userToken', value: data['token']).toString();
       userType = user.type.toString().toLowerCase();
 
       return user;

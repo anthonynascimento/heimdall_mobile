@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:heimdall/heimdall_api.dart';
 import 'package:heimdall/helper/flash.dart';
 import 'package:heimdall/model/user.dart';
 import 'package:scoped_model/scoped_model.dart';
+import "package:http/http.dart" as http;
 
 
 class AppModel extends Model {
@@ -37,27 +40,35 @@ class AppModel extends Model {
     storage.delete(key: "userToken");
   }
 
+  String removeLastCharacter(String str) {
+   String result = "";
+   if ((str != null) && (str.length > 0)) {
+      result = str.substring(0, str.length - 1);
+   }
+   return result;
+}
+
   Future<User> resumeExistingConnection() async {
+    print('Getting token from storage');
+    final storage = new FlutterSecureStorage();
     // No user in memory (probably the app was closed and reopen)
-    if (api.userToken == null) {
-      print('Getting token from storage');
-      final storage = new FlutterSecureStorage();
-
-      final String apiUrl = await storage.read(key: "apiUrl");
-      if (apiUrl == null) {
-        return null;
+    final String apiUrl = await storage.read(key: "apiUrl");
+    print(apiUrl);
+    final String userToken = await storage.read(key: "userToken");
+    if(apiUrl== null || apiUrl == "") return null;
+    if(userToken==null || userToken == "") return null;
+      Map<String,String> headers = {"Authorization": "token $userToken"};
+      final responseUser = await http.get(
+            '$apiUrl/utilisateur/user_connecte',
+      headers: headers);
+      print(responseUser.statusCode);
+      final data = json.decode(responseUser.body);
+      //print(data);
+      if (responseUser.statusCode == 200) {
+        //print(responseUser.body);
+        this.user = User.fromJson(json.decode(responseUser.body));
+        return this.user;
       }
-      this.api.apiUrl = apiUrl;
-
-      final String userToken = await storage.read(key: "userToken");
-      if (userToken == null) {
-        return null;
-      }
-      this.api.userToken = userToken;
-    }
-
-    //this.user = User.fromJson(await api.refreshUserToken());
-
-    return this.user;
+    
   }
 }

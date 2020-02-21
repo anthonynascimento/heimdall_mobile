@@ -17,9 +17,9 @@ abstract class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     if (json['role'] == ETUDIANT) {
-      return Etudiant.fromJson(json);
+      return Etudiant.fromJson(json["user"]);
     } else if (json['role'] == PROFESSEUR) {
-      return Professeur.fromJson(json);
+      return Professeur.fromJson(json["user"]);
     }
     throw new Exception('User type not supported.');
   }
