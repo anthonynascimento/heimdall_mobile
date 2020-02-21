@@ -200,51 +200,13 @@ class _RollCallFormState extends Logged<RollCallForm> {
             }
           }
         }
-        //Navigator.pop(context);
+        Navigator.pop(context);
       } catch (e) {
         showSnackBar(SnackBar(
           content: Text('Erreur, impossible de sauvegarder !'),
           backgroundColor: Colors.red
       ));
       }
-
-
-
-    /*List<StudentPresence> etudiantsAbsents = [];
-    */
-    /*if (_rollCall.classGroup == null || _rollCall.studentPresences.isEmpty) {
-      showSnackBar(SnackBar(
-          content: Text('La classe est vide !'),
-          backgroundColor: Colors.red
-      ));
-      return;
-    }
-    setState(() {
-      loading = true;
-    });
-    RollCall rollcall;
-    try {
-      if (_isUpdate) {
-        rollcall = await api.updateRollCall(_rollCall);
-      } else {
-        rollcall = await api.createRollCall(_rollCall);
-      }
-    } catch (e) {
-      print(e);
-      setState(() {
-        loading = false;
-      });
-      showSnackBar(SnackBar(
-          content: Text('Erreur, impossible de sauvegarder !'),
-          backgroundColor: Colors.red
-      ));
-    }
-    if (rollcall != null) {
-      setState(() {
-        loading = false;
-      });
-      Navigator.of(context).pop(rollcall);
-    }*/
   }
 
   Color _getPresenceColor(StudentPresence studentPresence, double opacity) {

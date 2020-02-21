@@ -27,7 +27,7 @@ class AbsenceEtudiant {
 
   factory AbsenceEtudiant.fromJson(Map<String, dynamic> json) => new AbsenceEtudiant(
     id: json["id"],
-    etudiant: json["etudiant"] == null ? null : Etudiant.fromApi(json["etudiant"]),
+    etudiant: json["etudiant"] == null ? null : Etudiant.fromApi(json["etudiant"]["user"]),
     absence: json["absence_etudiant"] == null ? null : Absence.fromApi(json["absence_etudiant"]),
   );
 
