@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_duration_picker/flutter_duration_picker.dart';
 import 'package:heimdall/exceptions/api_connect.dart';
 import 'package:heimdall/model/_absenceseance.dart';
+import 'package:heimdall/model/_matiere.dart';
 import 'package:heimdall/model/_seance.dart';
 import 'package:heimdall/model/class_group.dart';
 import 'package:heimdall/model/rollcall.dart';
@@ -23,6 +24,8 @@ class RollCallForm extends StatefulWidget {
 
 class _RollCallFormState extends Logged<RollCallForm> {
   List<ClassGroup> _classGroups = [];
+  List<Matiere> _matieres = [];
+  Matiere selectedMatiere;
   RollCall _rollCall = new RollCall();
   List<AbsenceSeance> liste = [];
   bool includeBaseContainer = false;
@@ -60,6 +63,7 @@ class _RollCallFormState extends Logged<RollCallForm> {
     });
     _rollCall.teacher = user;
     await _getClassGroups();
+    await _getListeMatieres();
     setState(() {
       loading = false;
     });
@@ -75,12 +79,31 @@ class _RollCallFormState extends Logged<RollCallForm> {
     });
   }
 
+  _getListeMatieres() async {
+    List<Matiere> listeMat = await api.getMatieres();
+    print(listeMat);
+    setState(() {
+      _matieres = listeMat;
+    });
+  }
+
   List<DropdownMenuItem<ClassGroup>> get _classGroupsDropdown {
     List<DropdownMenuItem<ClassGroup>> items = new List();
     for (ClassGroup classGroup in _classGroups) {
       items.add(new DropdownMenuItem(
           value: classGroup,
           child: new Text(classGroup.nompromotion)
+      ));
+    }
+    return items;
+  }
+
+  List<DropdownMenuItem<Matiere>> get _matieresDropdown {
+    List<DropdownMenuItem<Matiere>> items = new List();
+    for (Matiere mat in _matieres) {
+      items.add(new DropdownMenuItem(
+          value: mat,
+          child: new Text(mat.titre)
       ));
     }
     return items;
@@ -104,10 +127,19 @@ class _RollCallFormState extends Logged<RollCallForm> {
     });
   }
 
+  _onMatiereChanged(Matiere mat) async {
+    setState(() {
+      selectedMatiere = mat;
+    });
+    setState(() {
+    });
+  }
+
   _save() async {
       String urlCreationSeance =  '${api.apiUrl}/absence/seance/creation';
       String urlCreationAbsence =  '${api.apiUrl}/absence/creation';
       Map<String,String> headers = {"Authorization": "token ${api.userToken}"};
+      Map<String,String> headersPost = {"Content-Type":"application/json","Authorization": "token ${api.userToken}"};
       DateFormat dateFormat = DateFormat("yyyy-MM-dd");
       DateFormat timeFormat = DateFormat("HH:mm");
       String dateF = dateFormat.format(DateTime.now());
@@ -119,7 +151,7 @@ class _RollCallFormState extends Logged<RollCallForm> {
         "heure_deb":hDebF,
         "heure_fin":hFinF,
         "id_promo":_rollCall.classGroup.id.toString(),
-        "id_matiere":"1"};
+        "id_matiere":selectedMatiere.id.toString()};
       try {
                 http.Response response = await http.post('${api.apiUrl}/absence/seance/creation',
         headers: headers,
@@ -150,13 +182,13 @@ class _RollCallFormState extends Logged<RollCallForm> {
               //etudiantsAbsents.add(unePresence);
               print(_rollCall.classGroup.id);
               Map<String,String> bodyAbs = {
-                "absence":(!unePresence.present).toString(),
+                "absence":toBeginningOfSentenceCase((!unePresence.present).toString()),
                 "retard":unePresence.lateDuration.inMinutes.toString(),
                 "id_seance":idSeance.toString(),
                 "id_etudiant":unePresence.student.id.toString()
               };
               print(bodyAbs);
-              print(headers);
+              print(headersPost);
               http.Response response = await http.post('${api.apiUrl}/absence/creation',
                 headers: headers,
                 body: bodyAbs)
@@ -327,6 +359,16 @@ class _RollCallFormState extends Logged<RollCallForm> {
                         items: _classGroupsDropdown,
                         value: _rollCall.classGroup,
                         onChanged: _onClassGroupChanged,
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    ),
+                                        Padding(
+                      child: DropdownButton<Matiere>(
+                        isExpanded: true,
+                        hint: Text('Choisissez une matière'),
+                        items: _matieresDropdown,
+                        value: selectedMatiere,
+                        onChanged: _onMatiereChanged,
                       ),
                       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     )

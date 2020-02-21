@@ -55,6 +55,7 @@ class _HomeState extends Logged<Home> {
   }
 
   void _showUdpateRollcallForm([Seance rollcall]) async {
+    print(rollcall.id);
     dynamic returnedRollcall = await Navigator.of(context).pushNamed('/professeur/updaterollcall', arguments: rollcall);
     if (returnedRollcall != null) {
       showSnackBar(SnackBar(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:heimdall/model/_absenceseance.dart';
+import 'package:heimdall/model/_matiere.dart';
 import 'package:heimdall/ui/pages/logged.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -12,6 +13,7 @@ class Home extends StatefulWidget {
 class _HomeState extends Logged<Home> {
 
   List<AbsenceSeance> _studentPresences = List<AbsenceSeance>();
+  List<Matiere> _matieres = List<Matiere>();
   bool includeBaseContainer = false;
   RefreshController _refreshController = RefreshController(initialRefresh:false);
 
@@ -23,9 +25,14 @@ class _HomeState extends Logged<Home> {
   void _getPresence() async {
     await initializeDateFormatting('fr_FR', null);
     List<AbsenceSeance> studentPresences = await api.getStudentPresences();
+    List<Matiere> listeMat = [];
+    for(AbsenceSeance abs in studentPresences) {
+      listeMat.add(await api.getMatiereAppel(abs.seance.id));
+    }
     if(mounted)
     setState(() {
       _studentPresences = studentPresences;
+      _matieres = listeMat;
       loading = false;
     });
     _refreshController.refreshCompleted();
@@ -72,7 +79,7 @@ class _HomeState extends Logged<Home> {
 
   ListTile _buildItemsForListView(BuildContext context, int index) {
     return ListTile(
-      title: Text((_studentPresences[index].absence.absent ? "Absence" : "Retard")),
+      title: Text((_studentPresences[index].absence.absent ? "Absence en ${_matieres[index].titre}" : "Retard en ${_matieres[index].titre}")),
       subtitle: _studentPresences[index].absence.absent ? Text("${_studentPresences[index].seance.dateBonFormat()} (${_studentPresences[index].seance.heureDebBonFormat()}-${_studentPresences[index].seance.heureFinBonFormat()})")
        : Text("${_studentPresences[index].absence.retard} min le ${_studentPresences[index].seance.dateSeance}"),
       trailing: _getPresenceValidationStatus(_studentPresences[index]),

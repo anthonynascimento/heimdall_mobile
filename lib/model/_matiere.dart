@@ -1,10 +1,10 @@
 class Matiere {
   int id;
-  String nom;
+  String titre;
 
   Matiere({
     this.id,
-    this.nom,
+    this.titre,
   });
   
 
@@ -20,11 +20,11 @@ class Matiere {
 
   factory Matiere.fromJson(Map<String, dynamic> json) => new Matiere(
     id: json["id"],
-    nom: json["nom"],
+    titre: json["titre"],
   );
 
   Map<String, dynamic> toJson({bool forApi = true}) => {
     "id": id,
-    "nom": nom,
+    "titre": titre,
   };
 }

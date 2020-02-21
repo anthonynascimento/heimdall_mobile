@@ -1,7 +1,17 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:heimdall/model/_absenceetudiant.dart';
+import 'package:heimdall/model/_absenceseance.dart';
+import 'package:heimdall/model/_matiere.dart';
 import 'package:heimdall/model/_seance.dart';
 import 'package:heimdall/model/class_group.dart';
+import 'package:heimdall/model/rollcall.dart';
+import 'package:heimdall/model/student_presence.dart';
 import 'package:heimdall/ui/pages/logged.dart';
+import "package:http/http.dart" as http;
 
 class UpdateRollCallForm extends StatefulWidget {
   @override
@@ -10,7 +20,12 @@ class UpdateRollCallForm extends StatefulWidget {
 
 class _UpdateRollCallFormState extends Logged<UpdateRollCallForm> {
   List<ClassGroup> _classGroups = [];
+  List<Matiere> _matieres = [];
+  int id;
+  Matiere selectedMatiere;
   Seance _rollCall = new Seance();
+  List<AbsenceEtudiant> listeEtudiantsAbs = [];
+  List<AbsenceSeance> liste = [];
   bool includeBaseContainer = false;
   bool _loadingStudents = false;
   bool _isUpdate = false;
@@ -27,6 +42,8 @@ class _UpdateRollCallFormState extends Logged<UpdateRollCallForm> {
     super.didChangeDependencies();
     if (ModalRoute.of(context).settings.arguments != null) {
       _rollCall = ModalRoute.of(context).settings.arguments;
+      print(_rollCall.id);
+      id = _rollCall.id;
       _isUpdate = true;
     }
     if (!_isUpdate && !_draftLoadAsked) {
@@ -40,62 +57,106 @@ class _UpdateRollCallFormState extends Logged<UpdateRollCallForm> {
     }
   }
 
-  _init() async {
+
+  _init() async { 
+    print(api.idseance);
     setState(() {
       loading = true;
     });
-    //_rollCall.teacher = user;
-    //await _getClassGroups();
+    await _getListeEtudiantsAbsents();
     setState(() {
       loading = false;
     });
   }
 
-  /*_getClassGroups() async {
-    List<ClassGroup> classGroups = await api.getClasses();
+  _getListeEtudiantsAbsents() async {
+    List<AbsenceEtudiant> listeEtu = await api.getAbsencesDurantSeance(id);
+    print(listeEtu);
+    print(listeEtu);
     setState(() {
-      _classGroups = classGroups;
-      if (_rollCall.classGroup != null) {
-        _rollCall.classGroup = _classGroups.singleWhere((classGroup) => classGroup.id == _rollCall.classGroup.id);
-      }
+      listeEtudiantsAbs = listeEtu;
     });
-  }*/
-
-  List<DropdownMenuItem<ClassGroup>> get _classGroupsDropdown {
-    List<DropdownMenuItem<ClassGroup>> items = new List();
-    for (ClassGroup classGroup in _classGroups) {
-      items.add(new DropdownMenuItem(
-          value: classGroup,
-          child: new Text(classGroup.nompromotion)
-      ));
-    }
-    return items;
   }
 
-  /*List<Etudiant> recupererAbsences() {
-    List<Etu
-  }*/
 
-  /*_onClassGroupChanged(ClassGroup classGroup) async {
-    setState(() {
-      _rollCall.classGroup = classGroup;
-      _loadingStudents = true;
-    });
-    List<Etudiant> students = await api.getStudentsInClass(classGroup.id);
-    List<StudentPresence> presences = new List<StudentPresence>();
-    for (Etudiant student in students) {
-      print(student.type);
-      presences.add(new StudentPresence(student: student, present: true));
-    }
-    setState(() {
-      _rollCall.studentPresences.clear();
-      _rollCall.studentPresences.addAll(presences);
-      _loadingStudents = false;
-    });
-  }*/
+  _save() async {
+     /* String urlCreationSeance =  '${api.apiUrl}/absence/seance/creation';
+      String urlCreationAbsence =  '${api.apiUrl}/absence/creation';
+      Map<String,String> headers = {"Authorization": "token ${api.userToken}"};
+      Map<String,String> headersPost = {"Content-Type":"application/json","Authorization": "token ${api.userToken}"};
+      DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+      DateFormat timeFormat = DateFormat("HH:mm");
+      String dateF = dateFormat.format(DateTime.now());
+      String hDebF = timeFormat.format(_rollCall.dateStart);
+      String hFinF = timeFormat.format(_rollCall.dateEnd);
+      //Pour la création de séance
+      Map<String,String> bodySeance = {
+        "date":dateF,
+        "heure_deb":hDebF,
+        "heure_fin":hFinF,
+        "id_promo":_rollCall.classGroup.id.toString(),
+        "id_matiere":selectedMatiere.id.toString()};
+      try {
+                http.Response response = await http.post('${api.apiUrl}/absence/seance/creation',
+        headers: headers,
+        body: bodySeance)
+        .timeout(Duration(seconds: 10), onTimeout: () {
+          throw new ApiConnectException(type: ApiConnectExceptionType.timeout);
+        }
+        );
 
-  /*_save() async {
-    if (_rollCall.classGroup == null || _rollCall.studentPresences.isEmpty) {
+        final responseSeances = await http.get(
+          '${api.apiUrl}/absence/professeur/seances',
+          headers: headers);
+
+        if (responseSeances.statusCode == 200) {
+        // If the server did return a 200 OK response, then parse the JSON.
+          List<Seance> seances = List<Seance>.from(json.decode(responseSeances.body).map((x) => Seance.fromJson(x)));
+          Seance sean;
+          for(Seance se in seances) {
+            if(se.dateSeance==dateF && se.heureDebBonFormat()==hDebF && se.heureFinBonFormat()==hFinF) {
+              print(se.dateSeance+"-"+dateF);
+              sean = se;
+            }
+          }
+          int idSeance = sean.id;
+
+          for(StudentPresence unePresence in _rollCall.studentPresences) {
+            if(unePresence.present == false || unePresence.lateDuration.inMinutes > 0) {
+              //etudiantsAbsents.add(unePresence);
+              print(_rollCall.classGroup.id);
+              Map<String,String> bodyAbs = {
+                "absence":toBeginningOfSentenceCase((!unePresence.present).toString()),
+                "retard":unePresence.lateDuration.inMinutes.toString(),
+                "id_seance":idSeance.toString(),
+                "id_etudiant":unePresence.student.id.toString()
+              };
+              print(bodyAbs);
+              print(headersPost);
+              http.Response response = await http.post('${api.apiUrl}/absence/creation',
+                headers: headers,
+                body: bodyAbs)
+                .timeout(Duration(seconds: 10), onTimeout: () {
+                   throw new ApiConnectException(type: ApiConnectExceptionType.timeout);
+                }
+              );
+              print(response.statusCode);
+            }
+          }
+        }
+        //Navigator.pop(context);
+      } catch (e) {
+        showSnackBar(SnackBar(
+          content: Text('Erreur, impossible de sauvegarder !'),
+          backgroundColor: Colors.red
+      ));
+      }
+
+
+
+    /*List<StudentPresence> etudiantsAbsents = [];
+    */
+    /*if (_rollCall.classGroup == null || _rollCall.studentPresences.isEmpty) {
       showSnackBar(SnackBar(
           content: Text('La classe est vide !'),
           backgroundColor: Colors.red
@@ -127,7 +188,7 @@ class _UpdateRollCallFormState extends Logged<UpdateRollCallForm> {
         loading = false;
       });
       Navigator.of(context).pop(rollcall);
-    }
+    }*/
   }
 
   Color _getPresenceColor(StudentPresence studentPresence, double opacity) {
@@ -187,12 +248,12 @@ class _UpdateRollCallFormState extends Logged<UpdateRollCallForm> {
           backgroundColor: _getPresenceColor(studentPresence, 0.7),
         ),
         alignment: Alignment.topLeft
-    );
-  }*/
+    );*/
+  }
 
   @override
   Widget getBody() {
-    //final TextStyle hourStyle = new TextStyle(fontSize: 20, color: Theme.of(context).accentColor);
+    final TextStyle hourStyle = new TextStyle(fontSize: 20, color: Theme.of(context).accentColor);
     return Padding(
         padding: EdgeInsets.only(top: 20, left: 5, right: 5),
         child: Column(
@@ -200,15 +261,14 @@ class _UpdateRollCallFormState extends Logged<UpdateRollCallForm> {
               Card(
                 child: Column(
                   children: <Widget>[
+                    Text("Séance ${_rollCall.id.toString()} du ${_rollCall.dateBonFormat()}", style: hourStyle,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
+                         Text(_rollCall.heureDebBonFormat(), style: hourStyle),
+                         Text('    à '),
                         Padding(padding: EdgeInsets.only(left: 10), child:
-                        Text(_rollCall.heureDebBonFormat(), style: TextStyle(fontSize: 40.0))
-                        ),
-                        Padding(padding: EdgeInsets.only(left: 10), child: Text('à')),
-                        Padding(padding: EdgeInsets.only(left: 10), child:
-                        Text(_rollCall.heureFinBonFormat(), style: TextStyle(fontSize: 40.0))
+                        Text(_rollCall.heureFinBonFormat(), style: hourStyle),
                         ),
                       ],
                     ),
@@ -219,6 +279,16 @@ class _UpdateRollCallFormState extends Logged<UpdateRollCallForm> {
                         items: _classGroupsDropdown,
                         value: _rollCall.classGroup,
                         onChanged: _onClassGroupChanged,
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    ),
+                                        Padding(
+                      child: DropdownButton<Matiere>(
+                        isExpanded: true,
+                        hint: Text('Choisissez une matière'),
+                        items: _matieresDropdown,
+                        value: selectedMatiere,
+                        onChanged: _onMatiereChanged,
                       ),
                       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     )*/
@@ -274,7 +344,7 @@ class _UpdateRollCallFormState extends Logged<UpdateRollCallForm> {
                   padding: EdgeInsets.symmetric(vertical: 10),
                   color: Theme.of(context).accentColor,
                   textColor: Colors.white,
-                  //onPressed: _save
+                  onPressed: _save
               ))
             ]
         )

@@ -5,7 +5,9 @@ import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:heimdall/exceptions/api_connect.dart';
 import 'package:heimdall/exceptions/auth.dart';
+import 'package:heimdall/model/_absenceetudiant.dart';
 import 'package:heimdall/model/_absenceseance.dart';
+import 'package:heimdall/model/_matiere.dart';
 import 'package:heimdall/model/_seance.dart';
 import 'package:heimdall/model/etudiant.dart';
 import 'package:heimdall/model/rollcall.dart';
@@ -18,6 +20,7 @@ import 'model/class_group.dart';
 
 class HeimdallApi {
   String apiUrlProtocol;
+  int idseance;
   String apiUrlHostname;
   String apiUrlBaseEndpoint;
   String userToken;
@@ -37,6 +40,16 @@ class HeimdallApi {
   Future<List<ClassGroup>> getClasses() async {
     dynamic result = await get('absence/promotions', authHeader);
     return new List<ClassGroup>.from(result.map((x) => ClassGroup.fromJson(x)));
+  }
+
+  Future<List<Matiere>> getMatieres() async {
+    dynamic result = await get('absence/matieres', authHeader);
+    return new List<Matiere>.from(result.map((x) => Matiere.fromJson(x)));
+  }
+
+  Future<Matiere> getMatiereAppel(int appId) async {
+    dynamic result = await get('absence/seance/matiere/$appId', authHeader);
+    return Matiere.fromJson(result);
   }
 
   Future<List<Seance>> getRollCalls() async {
@@ -63,6 +76,12 @@ class HeimdallApi {
     dynamic result = await get('absence/etudiant', authHeader);
     print(result);
     return new List<AbsenceSeance>.from(result.map((x) => AbsenceSeance.fromJson(x)));
+  }
+
+  Future<List<AbsenceEtudiant>> getAbsencesDurantSeance(int id) async {
+    dynamic result = await get('absence/seances/absence/$id', authHeader);
+    print(result);
+    return new List<AbsenceEtudiant>.from(result.map((x) => AbsenceEtudiant.fromJson(x)));
   }
 
   Future<List<StudentPresence>> getStudentRetards() async {
