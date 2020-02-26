@@ -4,9 +4,6 @@ This project is still in development. Please install [Flutter](https://flutter.d
 
 # How to use the app
 
+You need to run a CheckNanterre server under Vagrant (using our [dev vagrant](https://github.com/ChaudhryHaseeb/Check-Nanterre) for now).
 
-If demo accounts have been created for you, you can use our demo server at [heimdall.watch](https://heimdall.watch).
-
-OR
-
-You need to run a Heimdall server (using our [dev docker](https://github.com/heimdall-watch/heimdall_docker) for now).
+To test the application, don't forget to change IP address in lib > reset_password.dart (line 32) by your IP address. You write your ip address to access the core of the app with your IDs but reset password is out of its perimeter.
