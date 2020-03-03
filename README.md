@@ -14,4 +14,4 @@ PS2 : Pour la réinitialisation, veuillez indiquer dans le code (dans lib > rese
 
 # Dépôt web associé
 
-* Accéder au dépôt associé - [dépôt mobile](https://github.com/ChaudhryHaseeb/Check-Nanterre)
+* Accéder au dépôt associé - [dépôt web](https://github.com/ChaudhryHaseeb/Check-Nanterre)
