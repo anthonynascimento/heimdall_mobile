@@ -1,9 +1,17 @@
-# Heimdall
+# Check Nanterre 
 
-This project is still in development. Please install [Flutter](https://flutter.dev/docs/get-started/install) to run it.
+# Prérequis
+* Projet toujours en développement. Veuillez installer [Flutter](https://flutter.dev/docs/get-started/install) pour le lancer.
+* Avoir un téléphone (Android de préférence) ouvert avec un émulateur ou relié au PC.
 
-# How to use the app
+# Comment utiliser l'application
 
-You need to run a CheckNanterre server under Vagrant (using our [dev vagrant](https://github.com/ChaudhryHaseeb/Check-Nanterre) for now).
+* Réaliser toutes les étapes du dépôt web
+* Récupérer votre adresse IP pour le champ "URL de connexion"
+PS1 : Veuillez ne pas utiliser l'application en étant sur le Wi-Fi de l'Université
+PS2 : Pour la réinitialisation, veuillez indiquer dans le code (dans lib > reset_password.dart, ligne 32) votre adresse IP, le champ d'URL de connexion n'étant pas rempli sauvegardé auparavant, aucune IP "mobile" n'est présente
+* Vous pouvez utiliser l'application
 
-To test the application, don't forget to change IP address in lib > reset_password.dart (line 32) by your IP address. You write your ip address to access the core of the app with your IDs but reset password is out of its perimeter.
+# Dépôt web associé
+
+* Accéder au dépôt associé - [dépôt mobile](https://github.com/ChaudhryHaseeb/Check-Nanterre)
