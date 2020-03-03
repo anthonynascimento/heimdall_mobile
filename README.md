@@ -2,7 +2,7 @@
 
 # Prérequis
 * Projet toujours en développement. Veuillez installer [Flutter](https://flutter.dev/docs/get-started/install) pour le lancer.
-* Avoir un téléphone (Android de préférence) ouvert avec un émulateur ou relié au PC.
+* Avoir un téléphone ouvert avec un émulateur ou relié au PC.
 
 # Comment utiliser l'application
 
